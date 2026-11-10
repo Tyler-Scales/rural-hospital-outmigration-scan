@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<title>Rural Outmigration Scan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: a briefing memo. Masthead, one ruled answer card with the ranked moves, then evidence
+   sections in the order a CEO would ask them (where do they go, why, can they use it, what is it worth).
+   Navy and blues, serif headings over a plain sans. */
+:root {
+  --bg: #f3f6fa;
+  --surface: #ffffff;
+  --surface-2: #e9f0f7;
+  --ink: #12304a;
+  --ink-2: #44596d;
+  --muted: #687b8d;
+  --line: #d3dfea;
+  --grid: #e4ebf2;
+  --navy: #1b4f6e;
+  --blue: #3c71b3;
+  --wash: #dbe9f6;
+  --s-own: #2e6fae;
+  --s-d1: #e06a2c;
+  --s-d2: #1a9a70;
+  --bar: #9db3c8;
+  --warn: #855600;
+  --warn-bg: #fcefd3;
+  --bad: #ad3229;
+  --font-display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1824; --surface: #122434; --surface-2: #17304a; --ink: #e6eef7; --ink-2: #b3c5d7; --muted: #8ba1b6;
+    --line: #25415b; --grid: #1c3349; --navy: #9ac8ee; --blue: #7cb0e8; --wash: #1a3550;
+    --s-own: #4a8bd2; --s-d1: #d9672c; --s-d2: #22a079; --bar: #4d6680;
+    --warn: #f0bb58; --warn-bg: #3a2d12; --bad: #f28b81;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1824; --surface: #122434; --surface-2: #17304a; --ink: #e6eef7; --ink-2: #b3c5d7; --muted: #8ba1b6;
+  --line: #25415b; --grid: #1c3349; --navy: #9ac8ee; --blue: #7cb0e8; --wash: #1a3550;
+  --s-own: #4a8bd2; --s-d1: #d9672c; --s-d2: #22a079; --bar: #4d6680;
+  --warn: #f0bb58; --warn-bg: #3a2d12; --bad: #f28b81;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+.shell {
+  max-width: 1080px; margin: 0 auto; display: grid; gap: 28px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; line-height: 1.2; color: var(--navy); }
+h3 { font-size: 1rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--blue); }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+.small { font-size: 0.875rem; }
+.muted { color: var(--muted); }
+.prose { display: grid; gap: 10px; max-width: 68ch; }
+.prose p, .prose li { color: var(--ink-2); }
+.prose b, .prose strong { color: var(--ink); }
+
+.masthead { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 2px solid var(--navy); }
+.caps { font-weight: 700; font-size: 0.82rem; letter-spacing: 0.2em; color: var(--navy); text-transform: uppercase; }
+.masthead h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.9rem, 4.6vw, 2.8rem); line-height: 1.08; color: var(--blue); }
+.masthead .dek { color: var(--ink-2); max-width: 70ch; font-size: 1.05rem; }
+.masthead .byline { color: var(--muted); font-size: 0.875rem; }
+
+.answer { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px clamp(16px, 3vw, 28px); display: grid; gap: 18px; }
+.answer h2 { font-size: 1.35rem; }
+.moves { list-style: none; margin: 0; padding: 0; display: grid; counter-reset: move; }
+.move { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) minmax(0, 15rem); gap: 6px 16px; padding-block: 14px; border-top: 1px solid var(--grid); counter-increment: move; }
+.move::before { content: counter(move); font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1; color: var(--blue); }
+.move h3 { font-size: 1.05rem; }
+.move p { color: var(--ink-2); font-size: 0.95rem; }
+.move .val { text-align: right; display: grid; align-content: start; gap: 2px; }
+.move .val b { font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--ink); }
+.move .val span { font-size: 0.8rem; color: var(--muted); }
+@media (max-width: 640px) {
+  .move { grid-template-columns: 1.8rem minmax(0, 1fr); }
+  .move .val { grid-column: 2; text-align: left; }
+}
+.chip { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.chip.flag, .chip.notable { color: var(--warn); background: var(--warn-bg); }
+.chip.enabler { color: var(--navy); background: var(--wash); }
+.chip.even { color: var(--ink-2); background: var(--surface-2); }
+.callout { border-left: 3px solid var(--warn); background: var(--warn-bg); padding: 12px 16px; border-radius: 0 var(--radius) var(--radius) 0; color: var(--ink); font-size: 0.95rem; max-width: 80ch; }
+
+section { display: grid; gap: 16px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 20px; align-items: start; }
+.stack { display: grid; gap: 20px; }
+.stack > .prose { max-width: 80ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px clamp(12px, 2.4vw, 20px); display: grid; gap: 10px; min-width: 0; }
+.panel.wide { max-width: 820px; }
+.panel .note { font-size: 0.82rem; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85rem; color: var(--ink-2); }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+svg text { fill: var(--ink-2); font-family: var(--font-ui); }
+svg .axis { fill: var(--muted); font-size: 12px; }
+svg .lab { fill: var(--ink); font-size: 13px; }
+svg .val { fill: var(--ink); font-size: 13px; font-weight: 700; }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; box-shadow: 0 4px 14px rgba(0,0,0,.12); z-index: 20; max-width: 260px; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 700; background: var(--surface-2); }
+td.n, th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: 0; }
+.levers td:first-child { font-weight: 700; color: var(--navy); white-space: nowrap; }
+.levers td { min-width: 9rem; }
+.levers td:nth-child(3) { min-width: 15rem; }
+details { font-size: 0.9rem; }
+details summary { cursor: pointer; color: var(--blue); }
+.audit { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.audit li { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 10px; color: var(--ink-2); font-size: 0.95rem; }
+.audit li span:first-child { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+ul.plain { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; color: var(--ink-2); }
+footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; font-size: 0.85rem; color: var(--muted); }
+footer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="masthead">
+    <div class="caps">ScaleStreet &middot; outmigration scan</div>
+    <h1>Keeping care local</h1>
+    <p class="dek">Where AI patient engagement and a digital front door can keep patients from leaving the county, and what each move is worth under critical access hospital payment rules.</p>
+    <p class="byline">Public-data scan, 2026-11-02. Built from CMS and Census files and the hospital's public website and cost reports. No internal hospital data was used. Figures are estimates. The hospital and nearby hospitals are de-identified.</p>
+  </header>
+
+  <section class="answer" aria-labelledby="a-h">
+    <h2 id="a-h">The short answer</h2>
+    <div class="prose">
+      <p>Most county residents who need a hospital bed go to <b>Referral Hospital B</b>, 38 miles away. In 2025 it took <b>266</b> of the 388 Medicare stays we can count from the county's ZIP codes (69%). Hospital A kept <b>23</b> (6%). Referral Hospital B's Medicare mix suggests that 32% of those stays need a tertiary hospital and 45% are serious medical cases that a 15-bed CAH without an ICU usually transfers. About 22%, roughly 60 stays a year, are conditions a CAH commonly keeps. A digital front door helps where the hospital already has the service and the patient leaves for lack of a call back, an appointment or a nudge. Three moves fit that test, and two more are worth planning.</p>
+    </div>
+    <ol class="moves">
+      <li class="move">
+        <div><h3>Bring residents home to a swing bed</h3>
+          <p>Get an alert when a county resident is admitted at Referral Hospital B or Regional Hospital C. An AI-drafted daily list then tells the swing-bed liaison whom to call and when. Each Traditional Medicare resident brought home for a 30-day stay adds about <b>$33K</b> to margin.</p></div>
+        <div class="val"><b>$91K to $360K</b><span>a year, at 3 to 12 more stays</span></div>
+      </li>
+      <li class="move">
+        <div><h3>Keep ordered imaging, lab, therapy and GI work local</h3>
+          <p>An AI scheduling and reminder agent works by phone and text. It books CT, mammography, ultrasound, lab, PT and colonoscopy locally and follows up on open orders. The hospital receives about 60% of county residents' Medicare outpatient dollars; the rest goes elsewhere.</p></div>
+        <div class="val"><b>$128K to $513K</b><span>a year, at 5% to 20% more volume</span></div>
+      </li>
+      <li class="move">
+        <div><h3>Answer the phone after hours, and book by text</h3>
+          <p>An AI voice and text line books clinic and telehealth visits, answers "do you do that here?" and sends emergencies to 911 or the ER. The hospital has no online booking today, and office hours end at 5 p.m.</p></div>
+        <div class="val"><span class="chip enabler">Enabler</span><span>Makes moves 1, 2 and 4 work</span></div>
+      </li>
+      <li class="move">
+        <div><h3>Specialty telehealth in the hospital's own clinic</h3>
+          <p>Start with cardiology and pediatrics, the specialties residents most often say they lack. Tests the specialist orders get booked locally.</p></div>
+        <div class="val"><span class="chip enabler">Plan</span><span>Value lands in move 2</span></div>
+      </li>
+      <li class="move">
+        <div><h3>Admit more medical patients locally <span class="chip flag">Needs physician coverage</span></h3>
+          <p>About 60 of Referral Hospital B's stays from the county are for conditions a CAH commonly treats, such as pneumonia, UTI and heart failure without complications. With tele-specialist backup, the hospital could keep some of them.</p></div>
+        <div class="val"><b>$23K to $92K</b><span>a year, at 6 to 24 more admissions</span></div>
+      </li>
+    </ol>
+    <p class="callout"><b>The Medicare Advantage rate decides move 1.</b> 64% of the county's Medicare beneficiaries are in Medicare Advantage. A 30-day MA swing stay adds $27K if the plan pays near the Medicare interim rate, and loses $54K at the $487 a day the model uses as a placeholder. Until the hospital's MA contract rates are in hand, aim move 1 at Traditional Medicare patients.</p>
+    <p class="small muted">Values are the change in the hospital's annual operating margin from the CAH engine, calibrated to its FY2025 cost report. Traditional Medicare pays 101% of cost, so added volume earns its share of fixed cost. Ranges show the low and high volume steps, with MA swing at $3,180 a day. The hospital&#x27;s strategic plan already calls for an AI tool and specialty telehealth within two years; moves 1 to 3 are candidates for the first.</p>
+  </section>
+
+  <section aria-labelledby="w-h">
+    <h2 id="w-h">Where county residents go for a hospital bed</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Medicare stays by hospital, 2025</h3>
+        <svg id="dests" class="chart" role="img" aria-label="Medicare inpatient stays from the county by hospital"></svg>
+        <p class="note">Known stays from the county's ZIP codes, with straight-line distance. CMS hides counts of 1 to 10: 55 such small cells, spread over 39 hospitals, add 55 to 550 more stays.</p>
+      </div>
+      <div class="panel">
+        <h3>The shift since 2016</h3>
+        <div class="legend" aria-hidden="true"><span><i style="background:var(--s-d1)"></i>Referral Hospital B</span><span><i style="background:var(--s-d2)"></i>Regional Hospital C</span><span><i style="background:var(--s-own)"></i>Hospital A</span></div>
+        <svg id="trend" class="chart" role="img" aria-label="Medicare inpatient stays by year at the main destinations and the hospital"></svg>
+        <details><summary>Show the numbers</summary><div class="tablewrap"><table id="trend-table"></table></div></details>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Hospital A's count went from 103 stays in 2016 to 23 in 2025, while Referral Hospital B's went from 153 to 266. The hospital's cost reports show Traditional Medicare acute discharges going from 82 in FY2019 to 10 in FY2025.</p>
+      <p><b>What they go for.</b> CMS doesn't publish diagnoses by home ZIP, so Referral Hospital B's own Medicare mix serves as a proxy. Of its 2,361 published Medicare discharges, 22% are medical conditions a CAH commonly keeps, such as pneumonia, UTI, heart failure, COPD and dehydration without major complications. Another 45% are the same conditions with major complications, and 32% are tertiary care (surgery, heart attacks, strokes, cardiac procedures). Applied to the 266 stays there, that is about 60 CAH-appropriate stays a year, or 180 counting the complicated ones.</p>
+      <p class="small muted">These counts include Medicare Advantage: at the largest destinations, CMS's service-area counts ran about 2.3 times their fee-for-service discharges. They don't cover commercial, Medicaid or outpatient care.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="u-h">
+    <h2 id="u-h">How county residents use care compared with the state</h2>
+    <div class="grid2">
+      <div class="tablewrap"><table id="util"></table></div>
+      <div class="prose">
+        <p>Medicare fee-for-service beneficiaries in the county, 2024: 511 of 1,407. The rest (64%) are in Medicare Advantage.</p>
+        <p><b>Emergency and inpatient use run well above the state</b> (1.5 and 1.4 times per beneficiary), a sign of thin primary-care access. After-hours phone and text booking into the hospital's clinic is the front-door answer, and it keeps the primary-care relationship local.</p>
+        <p><b>Skilled nursing days run 3.1 times the state's</b> per beneficiary.</p>
+        <p><b>Outpatient dollars leak.</b> The hospital's FY2025 Medicare Part B settlement ($978K) equals about 60% of county residents' Medicare fee-for-service outpatient payments ($1.62M). That share is an upper bound, because the hospital also serves non-residents and cost-based payment runs above outpatient prospective rates. At least $646K a year in fee-for-service dollars alone goes to other hospitals.</p>
+        <p><b>The swing program already draws regionally.</b> The hospital's FY2025 Medicare swing settlement ($5.38M) is 3.6 times what the county's fee-for-service residents spent on skilled nursing anywhere ($1.50M), so it is the natural place to bring residents home.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="r-h">
+    <h2 id="r-h">Can residents use a digital front door?</h2>
+    <div class="stack">
+      <div class="tablewrap"><table id="ready"></table></div>
+      <div class="prose">
+        <p>21% of county households have no internet (7% statewide). Among residents 65 and over, 71% have a computer and broadband (84% statewide), and 20% have no computer at all. The weakest ZIP is Town C, with 48% of households on broadband. 82% of households have a smartphone, and 13% get online only through a cellular plan.</p>
+        <p><b>Build voice and text first,</b> and treat the portal and online booking as a second channel. Rural Medicare beneficiaries in the state used telehealth at 15.7% in 2025 (19.8% urban), so specialty telehealth tends to work better as a visit in the hospital's own clinic room than as a video call from home.</p>
+        <p class="small muted">Census ACS 2020–2024. Small ZIPs carry wide margins of error; read the county row for those.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="f-h">
+    <h2 id="f-h">The front door today</h2>
+    <div class="grid2">
+      <div class="panel">
+        <h3>What a patient finds on the hospital's website</h3>
+        <ul class="audit"><li><span>Find</span><span>The home page&#x27;s Outpatient Rehabilitation link returns &quot;Page not found.&quot;</span></li><li><span>Find</span><span>Radiology offers CT around the clock, X-ray, digital mammography and ultrasound. There&#x27;s no MRI, so MRI volume leaves by necessity.</span></li><li><span>Find</span><span>GI offers colonoscopy on its own phone line, and a price estimator covers common procedures.</span></li><li><span>Access</span><span>There&#x27;s no online booking. Every service says to call, through a phone tree and department extensions, and office hours end at 5 p.m.</span></li><li><span>Access</span><span>Telehealth visits are booked only by calling the family practice, during weekday hours.</span></li><li><span>Access</span><span>Portal sign-up needs an email on file or a call to medical records during business hours.</span></li><li><span>Return</span><span>The swing-bed page already lists the post-acute needs of patients leaving the referral hospital: joint replacement, vent and trach weaning, stroke, IV antibiotics and wound care.</span></li></ul>
+      </div>
+      <div class="panel">
+        <h3>What the community and the plan already say</h3>
+        <ul class="audit"><li><span>CHNA</span><span>Most survey respondents say the county lacks specialists, led by pediatrics, cardiology and orthopedics.</span></li><li><span>CHNA</span><span>Among respondents who hit a barrier, not getting an appointment and long waits were common reasons.</span></li><li><span>CHNA</span><span>Medicare preventable hospital stays run well above the state rate.</span></li><li><span>Plan</span><span>The strategic plan calls for an AI tool, a specialty telehealth partner, non-emergency transport, and pediatrics and women&#x27;s health recruiting.</span></li><li><span>Nearby</span><span>6 rural health clinics sit within 45 miles; the nearest is 29 miles away.</span></li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="l-h">
+    <h2 id="l-h">Levers by stage of the patient's journey</h2>
+    <div class="tablewrap">
+      <table class="levers">
+        <thead><tr><th>Stage</th><th>What leaks</th><th>Public evidence</th><th>AI or digital lever</th><th class="n">Margin a year</th></tr></thead>
+        <tbody>
+          <tr><td>Find</td><td>Residents don't know a service is offered locally.</td><td>See the website audit above.</td><td>Fix the site and listings, and add a one-page "done here" directory the AI phone line can also answer from.</td><td class="n">Low cost</td></tr>
+          <tr><td>Access</td><td>No answer or no slot, so the patient drives to a regional urgent care or ER.</td><td>Emergency visits run 1.5 times the state rate per beneficiary.</td><td>After-hours AI voice and text booking, same-day clinic slots, and reminders.</td><td class="n"><span class="chip enabler">Enabler</span></td></tr>
+          <tr><td>Refer</td><td>Orders for imaging, lab, therapy and GI go to the tertiary system by default.</td><td>The hospital receives about 60% of county residents' Medicare outpatient dollars.</td><td>"Local first" scheduling agent, outreach on open orders, and a price-estimate link in the text.</td><td class="n">$128K–$513K</td></tr>
+          <tr><td>Return</td><td>After a tertiary stay, residents go to a nursing home elsewhere instead of the hospital's swing bed.</td><td>266 stays at Referral Hospital B and 60 at Regional Hospital C in 2025.</td><td>Hospital admission alerts through the state health information exchange, plus an AI-drafted liaison worklist.</td><td class="n">$91K–$360K</td></tr>
+          <tr><td>Stay</td><td>Specialist care means a long drive, and the tests follow the specialist.</td><td>Residents name cardiology and pediatrics as the specialties they lack.</td><td>Specialty telehealth room at the hospital, with AI intake and local booking of follow-up tests.</td><td class="n"><span class="chip enabler">In move 2</span></td></tr>
+          <tr><td>Admit</td><td>Pneumonia, UTI and heart failure patients are transferred out.</td><td>About 60 stays a year at Referral Hospital B are in CAH-appropriate DRGs.</td><td>Tele-specialist and tele-hospitalist backup for the admit-or-transfer call. <span class="chip flag">Needs physician coverage</span></td><td class="n">$23K–$92K</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="v-h">
+    <h2 id="v-h">What it's worth under CAH payment rules</h2>
+    <div class="stack">
+      <div class="panel wide">
+        <h3>Change in annual operating margin, low to high volume step</h3>
+        <svg id="value" class="chart" role="img" aria-label="Margin value range for each lever"></svg>
+        <p class="note">Bars run from the low to the high volume step, and the tick marks the middle step. The open circle shows the middle step for swing beds if MA pays $487 a day.</p>
+      </div>
+      <div class="prose">
+        <p><b>Traditional Medicare pays a CAH 101% of cost,</b> so added Medicare volume pays its share of the fixed costs the hospital carries anyway. One more Traditional Medicare swing day adds $1,084 to margin, and one more acute day adds $1,630.</p>
+        <p><b>Medicare Advantage pays its contract rate.</b> An MA swing day adds $900 at $3,180 a day (about 95% of the interim rate), and loses $1,793 at $487. MA acute days use a $3,500 placeholder and add $734.</p>
+        <p><b>Outpatient volume lowers the cost-to-charge ratio.</b> That trims what Medicare pays for inpatient ancillaries, and the engine counts it. At the $487 MA rate, the model would need non-Medicare outpatient to pay 112% of charges to match the hospital's books; at $3,180 it needs 83%. These figures use $3,180.</p>
+        <p class="small muted">Assumptions: swing stays last 30 days (the county's Medicare skilled-nursing average), and 64% of them are Traditional Medicare, matching the hospital's FY2025 mix. Acute stays last 3.2 days, with 52% Traditional Medicare. 60% of ancillary cost and 75% of nursing-unit cost are treated as fixed. Lever costs (software, staff time) are not netted out; the workbook has a column for them.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="c-h">
+    <h2 id="c-h">Leakage a front door can't fix</h2>
+    <div class="prose">
+      <p>These are capacity or partnership decisions. Better engagement won't bring the care back.</p>
+      <ul class="plain"><li>MRI, surgery and cardiac procedures, along with heart attack and stroke care: the 32% tertiary share above.</li><li>Dialysis, mental health, pediatrics and obstetrics, where the county lacks them.</li><li>Transportation to appointments. An AI booking line can schedule rides once a service exists.</li></ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="d-h">
+    <h2 id="d-h">Data that would sharpen this</h2>
+    <div class="prose">
+      <p>Each of these is a standard report export. Counts by month, service and destination are enough; no patient names are needed.</p>
+      <ul class="plain">
+        <li><b>Outgoing referrals and orders</b> by type and destination: sizes move 2.</li>
+        <li><b>Swing-bed referrals</b> received, accepted and declined, by referring hospital and payer: sizes move 1.</li>
+        <li><b>ED visits by acuity and hour, and transfers out by reason:</b> sizes moves 3 and 5.</li>
+        <li><b>Call volume, abandoned calls and third-next-available appointment</b> for the clinic: sizes move 3.</li>
+        <li><b>MA contract rates</b> for swing and acute care: decides whether move 1 should include MA patients.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Sources.</b> All public, pulled 2026-11-02. The workbook lists every figure with its source.</p>
+    <ul>
+      <li>CMS Hospital Service Area File, CY2016–2025 (Medicare inpatient stays by home ZIP and hospital).</li>
+      <li>CMS Medicare Inpatient Hospitals by Provider, and by Provider and Service, CY2024.</li>
+      <li>CMS Medicare Geographic Variation by county, 2024.</li>
+      <li>CMS Provider of Services, Medicare Telehealth Trends, and Rural Health Clinic Enrollments.</li>
+      <li>Census ACS 5-year 2020–2024 (B28001, B28002, B28005) and the 2024 ZCTA Gazetteer.</li>
+      <li>The hospital's Medicare cost reports (HCRIS) and public website.</li>
+    </ul>
+  </footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const F = {"dests":[{"label":"Referral Hospital B","place":"","miles":37.8,"cases":266,"days":1380,"small":1,"own":false},{"label":"Regional Hospital C","place":"","miles":26.5,"cases":60,"days":212,"small":3,"own":false},{"label":"Hospital A","place":"","miles":0,"cases":23,"days":73,"small":1,"own":true},{"label":"Tertiary Hospital D","place":"","miles":85.8,"cases":15,"days":94,"small":2,"own":false},{"label":"Regional Hospital E","place":"","miles":58.3,"cases":12,"days":35,"small":2,"own":false},{"label":"Regional Hospital F","place":"","miles":37.2,"cases":12,"days":48,"small":1,"own":false}],"trend":[{"year":2016,"d1":153,"d2":49,"own":103,"known":316,"small":55},{"year":2017,"d1":137,"d2":58,"own":82,"known":277,"small":57},{"year":2018,"d1":169,"d2":80,"own":79,"known":359,"small":52},{"year":2019,"d1":124,"d2":64,"own":72,"known":291,"small":55},{"year":2020,"d1":142,"d2":44,"own":64,"known":279,"small":55},{"year":2021,"d1":216,"d2":43,"own":43,"known":328,"small":51},{"year":2022,"d1":163,"d2":40,"own":38,"known":252,"small":59},{"year":2023,"d1":201,"d2":50,"own":19,"known":297,"small":47},{"year":2024,"d1":217,"d2":76,"own":12,"known":333,"small":50},{"year":2025,"d1":266,"d2":60,"own":23,"known":388,"small":55}],"names":{"d1":"Referral Hospital B","d2":"Regional Hospital C","own":"Hospital A"},"short":{"d1":"Hospital B","d2":"Hospital C","own":"Hospital A"},"util":[{"label":"Emergency visits per 1,000","rate":false,"county":872.7984,"state":563.9321},{"label":"Inpatient stays per 1,000","rate":false,"county":320.9393,"state":224.0577},{"label":"Hospital readmission rate","rate":true,"county":0.2067,"state":0.1833},{"label":"Skilled nursing days per 1,000","rate":false,"county":3211.3503,"state":1048.9409},{"label":"Office and clinic visits per 1,000","rate":false,"county":16682.9746,"state":15811.3612},{"label":"Imaging events per 1,000","rate":false,"county":4221.135,"state":4466.1662},{"label":"Tests per 1,000","rate":false,"county":6181.9961,"state":6544.482},{"label":"Surgery-center events per 1,000","rate":false,"county":101.7613,"state":286.7441}],"ready":[{"label":"Town A","age65_share":0.15871431423437812,"age65_broadband_share":0.6654088050314465,"age65_no_computer_share":0.22138364779874214,"hh_cellular_only_share":0.11732152739346983,"hh_no_internet_share":0.2197011621472053,"hh_smartphone_share":0.8118428334255673},{"label":"Town C","age65_share":0.21217391304347827,"age65_broadband_share":0.5409836065573771,"age65_no_computer_share":0.3360655737704918,"hh_cellular_only_share":0.14423076923076922,"hh_no_internet_share":0.16346153846153846,"hh_smartphone_share":0.8173076923076923},{"label":"Town B","age65_share":0.20238095238095238,"age65_broadband_share":1.0,"age65_no_computer_share":0.0,"hh_cellular_only_share":0.238562091503268,"hh_no_internet_share":0.1437908496732026,"hh_smartphone_share":0.8562091503267973},{"label":"Town D","age65_share":0.3058823529411765,"age65_broadband_share":0.9615384615384616,"age65_no_computer_share":0.038461538461538464,"hh_cellular_only_share":0.0,"hh_no_internet_share":0.12121212121212122,"hh_smartphone_share":0.9696969696969697},{"label":"County","age65_share":0.17882277671145233,"age65_broadband_share":0.7101967799642218,"age65_no_computer_share":0.19588550983899822,"hh_cellular_only_share":0.1272652388797364,"hh_no_internet_share":0.20881383855024713,"hh_smartphone_share":0.8241350906095551},{"label":"State","age65_share":0.14935504329020527,"age65_broadband_share":0.842537206402451,"age65_no_computer_share":0.08357920487304761,"hh_cellular_only_share":0.10720146398237174,"hh_no_internet_share":0.06606279357328232,"hh_smartphone_share":0.9213514446173957}],"levers":{"swing":{"counts":[3,6,12],"interim":[91179.60345705971,181508.2764967084,359843.49504026026],"placeholder":[4463.532446522266,8076.134475640953,12979.210998121649]},"acute":{"counts":[6,12,24],"interim":[23014.04883653298,45993.023819383234,91857.4532883279],"placeholder":[23014.04883653298,45993.023819383234,91857.4532883279]},"outpatient":{"pcts":[0.05,0.1,0.2],"interim":[127663.68263278529,255759.2383996956,513081.2550088316],"placeholder":[199778.77945503592,399989.4320441969,801541.6422978267],"charges":[285108.60000000003,570217.2000000001,1140434.4000000001],"by_line":{"05400":[81642.5721074529,163369.2192323208,327034.7395970337],"06000":[39165.988400645554,78577.93836669624,158038.62795865536],"06600":[4783.146569292992,9638.478758882731,19546.622874714434],"06700":[-21.456875327974558,-13.262819651514292,87.53485552221537],"05000":[2093.43243072927,4186.86486145854,8373.72972290963]},"lines":{"05400":"Radiology","06000":"Laboratory","06600":"Physical therapy","06700":"Occupational therapy","05000":"GI endoscopy (OR cost center)"}}},"geo_year":2024};
+const NS = 'http://www.w3.org/2000/svg';
+const fmt$ = (x) => (x < 0 ? '−' : '') + '$' + (Math.abs(x) >= 1e6 ? (Math.abs(x) / 1e6).toFixed(2) + 'M' : Math.abs(x) >= 1e4 ? Math.round(Math.abs(x) / 1e3) + 'K' : Math.round(Math.abs(x)).toLocaleString('en-US'));
+const pct = (x, d = 0) => (100 * x).toFixed(d) + '%';
+function el(tag, attrs, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const tip = document.getElementById('tip');
+function hover(node, lines) {
+  node.addEventListener('pointermove', (ev) => {
+    tip.replaceChildren(...lines.map((t, i) => { const d = document.createElement(i ? 'div' : 'b'); d.textContent = t; return d; }));
+    tip.hidden = false;
+    tip.style.left = Math.min(ev.clientX + 14, window.innerWidth - tip.offsetWidth - 8) + 'px';
+    tip.style.top = (ev.clientY + 14) + 'px';
+  });
+  node.addEventListener('pointerleave', () => { tip.hidden = true; });
+}
+
+// Destinations: horizontal bars, the hospital in its series color, everyone else neutral.
+(function dests() {
+  const svg = document.getElementById('dests');
+  const rows = F.dests;
+  const W = 420, rowH = 38, top = 6, labW = 168, valW = 40, H = top + rows.length * rowH + 4;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const max = Math.max(...rows.map((d) => d.cases));
+  const x = (v) => labW + (W - labW - valW) * v / max;
+  rows.forEach((d, i) => {
+    const y = top + i * rowH;
+    el('text', { x: 0, y: y + 15, class: 'lab' }, svg, d.label.length > 22 ? d.label.slice(0, 21) + '…' : d.label);
+    el('text', { x: 0, y: y + 31, class: 'axis' }, svg, (d.place ? d.place + ' · ' : '') + `${Math.round(d.miles)} mi`);
+    const w = Math.max(2, x(d.cases) - labW);
+    el('rect', { x: labW, y: y + 9, width: w, height: 18, rx: 3, fill: d.own ? 'var(--s-own)' : 'var(--bar)' }, svg);
+    el('text', { x: labW + w + 6, y: y + 23, class: 'val' }, svg, d.cases);
+    const hit = el('rect', { x: 0, y, width: W, height: rowH, fill: 'transparent' }, svg);
+    hover(hit, [d.label, `${d.cases} known stays, ${d.days.toLocaleString('en-US')} days`, d.small ? `${d.small} more small cell${d.small > 1 ? 's' : ''} (1–10 each)` : 'no hidden small cells']);
+  });
+})();
+
+// Trend: three lines, direct-labelled at the right end.
+(function trend() {
+  const svg = document.getElementById('trend');
+  const T = F.trend;
+  const W = 420, H = 250, L = 34, R = 92, Tp = 12, B = 26;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const series = [['d1', F.names.d1, 'var(--s-d1)'], ['d2', F.names.d2, 'var(--s-d2)'], ['own', F.names.own, 'var(--s-own)']];
+  const step = Math.max(...T.flatMap((t) => series.map(([k]) => t[k]))) > 150 ? 50 : 25;
+  const max = Math.ceil(Math.max(...T.flatMap((t) => series.map(([k]) => t[k]))) / step) * step;
+  const x = (i) => L + (W - L - R) * i / (T.length - 1);
+  const y = (v) => Tp + (H - Tp - B) * (1 - v / max);
+  for (let v = 0; v <= max; v += step) {
+    el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--grid)', 'stroke-width': 1 }, svg);
+    el('text', { x: L - 6, y: y(v) + 4, 'text-anchor': 'end', class: 'axis' }, svg, v);
+  }
+  T.forEach((t, i) => { if (i % 3 === 0 || i === T.length - 1) el('text', { x: x(i), y: H - 6, 'text-anchor': 'middle', class: 'axis' }, svg, t.year); });
+  const ends = [];
+  for (const [k, name, color] of series) {
+    el('polyline', { points: T.map((t, i) => `${x(i)},${y(t[k])}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linejoin': 'round' }, svg);
+    T.forEach((t, i) => {
+      el('circle', { cx: x(i), cy: y(t[k]), r: i === T.length - 1 ? 4.5 : 3, fill: color, stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+      hover(el('circle', { cx: x(i), cy: y(t[k]), r: 11, fill: 'transparent' }, svg), [`${name}, ${t.year}`, `${t[k]} known Medicare stays`]);
+    });
+    ends.push({ name: F.short[k], v: T[T.length - 1][k] });
+  }
+  ends.sort((a, b) => b.v - a.v);
+  let last = -Infinity;
+  for (const e of ends) {
+    const yy = Math.max(y(e.v) + 4, last + 15);
+    last = yy;
+    el('text', { x: W - R + 10, y: yy, class: 'lab' }, svg, `${e.name} ${e.v}`);
+  }
+  const tb = document.getElementById('trend-table');
+  const head = document.createElement('tr');
+  for (const [t, n] of [['Year', false], [F.short.d1, true], [F.short.d2, true], [F.short.own, true], ['All known', true], ['Small cells', true]]) {
+    const th = document.createElement('th'); th.textContent = t; if (n) th.className = 'n'; head.appendChild(th);
+  }
+  const thead = document.createElement('thead'); thead.appendChild(head);
+  const tbody = document.createElement('tbody');
+  for (const t of T) {
+    const tr = document.createElement('tr');
+    [t.year, t.d1, t.d2, t.own, t.known, t.small].forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i) td.className = 'n'; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  }
+  tb.replaceChildren(thead, tbody);
+})();
+
+// County vs state utilization with a direction chip.
+(function util() {
+  const t = document.getElementById('util');
+  const head = document.createElement('thead');
+  head.innerHTML = '<tr><th></th><th class="n">County</th><th class="n">State</th><th class="n">vs state</th></tr>';
+  head.querySelector('th').textContent = `Medicare FFS, ${F.geo_year}`;
+  const body = document.createElement('tbody');
+  for (const u of F.util) {
+    const r = u.county / u.state;
+    const f = (v) => u.rate ? pct(v, 1) : Math.round(v).toLocaleString('en-US');
+    const tr = document.createElement('tr');
+    [u.label, f(u.county), f(u.state)].forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i) td.className = 'n'; tr.appendChild(td); });
+    const td = document.createElement('td'); td.className = 'n';
+    const chip = document.createElement('span');
+    chip.className = 'chip ' + (r >= 1.15 || r <= 0.85 ? 'notable' : 'even');
+    chip.textContent = r >= 1.15 ? `${r.toFixed(1)}× state` : r <= 0.85 ? `${r.toFixed(2)}× state` : 'about even';
+    td.appendChild(chip); tr.appendChild(td); body.appendChild(tr);
+  }
+  t.replaceChildren(head, body);
+})();
+
+// Digital readiness by area.
+(function ready() {
+  const rows = [['People 65+', 'age65_share'], ['65+ with broadband', 'age65_broadband_share'], ['65+ with no computer', 'age65_no_computer_share'],
+    ['Households, no internet', 'hh_no_internet_share'], ['Households, smartphone', 'hh_smartphone_share'], ['Households, cellular only', 'hh_cellular_only_share']];
+  const t = document.getElementById('ready');
+  const head = document.createElement('tr');
+  head.appendChild(document.createElement('th'));
+  for (const a of F.ready) { const th = document.createElement('th'); th.className = 'n'; th.textContent = a.label; head.appendChild(th); }
+  const thead = document.createElement('thead'); thead.appendChild(head);
+  const tbody = document.createElement('tbody');
+  for (const [lab, k] of rows) {
+    const tr = document.createElement('tr');
+    const td0 = document.createElement('td'); td0.textContent = lab; tr.appendChild(td0);
+    for (const a of F.ready) { const td = document.createElement('td'); td.className = 'n'; td.textContent = pct(a[k]); tr.appendChild(td); }
+    tbody.appendChild(tr);
+  }
+  t.replaceChildren(thead, tbody);
+})();
+
+// Lever value ranges, drawn at the panel's real width so text stays readable on a phone.
+function value() {
+  const svg = document.getElementById('value');
+  svg.replaceChildren();
+  const L = F.levers;
+  const rows = [
+    ['Swing-bed homecoming', 'Swing beds', L.swing.interim, L.swing.placeholder[1], `${L.swing.counts.join(' / ')} stays`],
+    ['Local-first outpatient', 'Outpatient', L.outpatient.interim, null, L.outpatient.pcts.map((p) => pct(p)).join(' / ') + ' volume'],
+    ['Admit locally (flagged)', 'Admit locally', L.acute.interim, null, `${L.acute.counts.join(' / ')} admissions`],
+  ];
+  const W = Math.round(Math.min(760, Math.max(320, svg.getBoundingClientRect().width || 720)));
+  const narrow = W < 520;
+  const labW = narrow ? 128 : 200, R = 24, rowH = 64, top = 22, axisH = 26, H = top + rows.length * rowH + axisH;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const step = narrow ? 200000 : 100000;
+  const max = Math.ceil(Math.max(...rows.flatMap((r) => r[2])) / step) * step;
+  const x = (v) => labW + (W - labW - R) * Math.max(0, v) / max;
+  for (let v = 0; v <= max; v += step) {
+    el('line', { x1: x(v), x2: x(v), y1: top, y2: H - axisH, stroke: 'var(--grid)', 'stroke-width': 1 }, svg);
+    el('text', { x: x(v), y: H - 6, 'text-anchor': 'middle', class: 'axis' }, svg, v === 0 ? '$0' : '$' + v / 1000 + 'K');
+  }
+  rows.forEach(([name, shortName, [lo, mid, hi], pl, steps], i) => {
+    const y = top + i * rowH;
+    el('text', { x: 0, y: y + 18, class: 'lab' }, svg, narrow ? shortName : name);
+    el('text', { x: 0, y: y + 35, class: 'axis' }, svg, narrow ? steps.replace(' volume', '') : steps);
+    el('rect', { x: x(lo), y: y + 8, width: Math.max(3, x(hi) - x(lo)), height: 16, rx: 4, fill: 'var(--s-own)', opacity: 0.85 }, svg);
+    el('rect', { x: x(mid) - 1.5, y: y + 4, width: 3, height: 24, rx: 1, fill: 'var(--ink)' }, svg);
+    el('text', { x: x(hi) + (x(hi) > W - 80 ? -4 : 6), y: y + 45, 'text-anchor': x(hi) > W - 80 ? 'end' : 'start', class: 'val' }, svg, `${fmt$(lo)} – ${fmt$(hi)}`);
+    if (pl != null) {
+      el('circle', { cx: x(pl), cy: y + 16, r: 6, fill: 'var(--surface)', stroke: 'var(--bad)', 'stroke-width': 2 }, svg);
+      el('text', { x: x(pl), y: y - 2, class: 'axis' }, svg, `MA swing at $487: ${fmt$(pl)}`);
+    }
+    const lines = [name, `Low ${fmt$(lo)} · middle ${fmt$(mid)} · high ${fmt$(hi)}`];
+    if (pl != null) lines.push(`Middle step if MA swing pays $487/day: ${fmt$(pl)}`);
+    hover(el('rect', { x: 0, y, width: W, height: rowH, fill: 'transparent' }, svg), lines);
+  });
+}
+value();
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(value, 150); });
+</script>
+
+</body>
+</html>

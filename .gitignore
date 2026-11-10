@@ -1,0 +1,9 @@
+# Local inputs and outputs: rebuilt from public data, and config.json names the hospital
+config.json
+data/
+output/
+pipeline/cache/
+
+__pycache__/
+node_modules/
+.DS_Store

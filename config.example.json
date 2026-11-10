@@ -1,0 +1,39 @@
+{
+  "ccn": "000000",
+  "zips": ["00000", "00001"],
+  "county_fips": "00000",
+  "anonymize": true,
+
+  "page_title": "Outmigration Scan",
+  "headline": "Keeping care local",
+  "prepared_by": "ScaleStreet",
+  "hospital_name": "Hospital A",
+  "hospital_short": "Hospital A",
+  "state_label": "the state",
+  "rhc_radius_miles": 45,
+
+  "provider_labels": {
+    "000001": {"name": "Referral Hospital B", "short": "Hospital B"},
+    "000002": "Regional Hospital C"
+  },
+  "zip_labels": {"00000": "Town A", "00001": "Town B"},
+
+  "local_services": "CT, mammography, ultrasound, lab, PT and colonoscopy",
+  "specialties": "cardiology and pediatrics",
+  "access_note": "The hospital has no online booking today, and office hours end at 5 p.m.",
+  "plan_note": "The strategic plan already calls for an AI tool; moves 1 to 3 are candidates for it.",
+
+  "front_door": [
+    ["Find", "What a patient finds (or doesn't) when looking for a service on the hospital's website."],
+    ["Access", "How a patient books: phone tree, online booking, hours, portal sign-up."],
+    ["Return", "What the swing-bed page offers patients leaving the referral hospital."]
+  ],
+  "community": [
+    ["CHNA", "What the community health needs assessment says about access and missing specialties."],
+    ["Plan", "What the hospital's strategic plan already commits to."]
+  ],
+  "capacity_gaps": [
+    "MRI, surgery and cardiac procedures, along with heart attack and stroke care: the {tier_c} tertiary share above.",
+    "Dialysis, mental health, pediatrics and obstetrics, where the county lacks them."
+  ]
+}
