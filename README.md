@@ -7,7 +7,7 @@ This project answers that question for a rural hospital using **public data only
 ![The short answer: ranked digital-front-door moves with margin ranges](docs/screenshots/01-short-answer.png)
 
 > **Sample shown:** a 15-bed critical access hospital, de-identified. The hospital is "Hospital A" and the hospitals its residents travel to are lettered. Figures come from real public data for CY2025 and the FY2025 cost report.
-> Open [`docs/sample-report.html`](docs/sample-report.html) in a browser for the full interactive page.
+> **[View the live sample report](https://tyler-scales.github.io/rural-hospital-outmigration-scan/sample-report.html)** for the full interactive page.
 
 ---
 
@@ -91,7 +91,8 @@ analysis/
   build_report.py        figures -> briefing page + sourced workbook
   report.template.html   the briefing page
 docs/
-  sample-report.html   de-identified sample output
+  sample-report.html   de-identified sample output (published with GitHub Pages)
+  index.html           redirects the Pages site to the sample report
   screenshots/         images used above
 config.example.json    the inputs a run needs
 ```
