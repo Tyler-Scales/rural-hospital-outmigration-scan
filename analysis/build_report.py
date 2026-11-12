@@ -59,6 +59,26 @@ def money(x, unit=True):
 def pct(x, d=0):
     return f"{100 * x:.{d}f}%"
 
+def telehealth_latest(rows):
+    """CMS's newest telehealth period for the state: a full year when the newest year has one, else its latest quarter,
+    with the same period a year earlier (a quarter's rate is far below a full year's, so only like periods compare)."""
+    y = max(t["year"] for t in rows)
+    get = lambda yr, q, ruca: next((t["pct"] for t in rows if t["year"] == yr and t["quarter"] == q and t["ruca"] == ruca), None)
+    if get(y, "Overall", "Rural") is not None:
+        q, label = "Overall", str(y)
+    else:
+        q = max(t["quarter"] for t in rows if t["year"] == y and t["quarter"] != "Overall")
+        label = f"the {dict(zip('1234', ('first', 'second', 'third', 'fourth')))[q]} quarter of {y}"
+    return {"label": label, "year": y, "quarter": q, "rural": get(y, q, "Rural"), "urban": get(y, q, "Urban"), "rural_prior": get(y - 1, q, "Rural")}
+
+
+def tele_change(t):
+    if t["rural_prior"] is None:
+        return ""
+    word = "down from" if t["rural"] < t["rural_prior"] else "up from" if t["rural"] > t["rural_prior"] else "the same as"
+    return f", {word} {100 * t['rural_prior']:.1f}% a year earlier"
+
+
 
 def esc(s):
     return html.escape(str(s), quote=True)
@@ -178,8 +198,8 @@ def build_facts(cfg):
     icu = ((om["providers"].get(ccn) or {}).get("services") or {}).get("ICU")
 
     acs = om["acs"]
-    tele = {(t["year"], t["ruca"]): t["pct"] for t in om["telehealth"]}
-    tele_year = max(y for y, _ in tele)
+    tele = telehealth_latest(om["telehealth"])
+    mam = om["ma_monthly"]
     cases = val["cases"]
     I, Pl = cases["interim"], cases["placeholder"]
     lev = lambda c, k: [x["margin"] for x in c["levers"][k]]
@@ -193,7 +213,8 @@ def build_facts(cfg):
         "own_cases": own["cases"], "own_share": own["cases"] / known if known else 0, "d1_share": agg[d1]["cases"] / known if known else 0,
         "trend": trend,
         "tm_acute_first": tm_acute[min(tm_acute)], "tm_acute_last": tm_acute[max(tm_acute)], "tm_acute_first_fy": "FY" + min(tm_acute),
-        "ma_share": f(cg, "MA_PRTCPTN_RATE"), "ffs_benes": int(f(cg, "BENES_OM_CNT")), "ab_benes": int(f(cg, "BENES_WTH_PTAPTB_CNT")), "geo_year": cg["year"],
+        "ma_share": mam["ma_share"], "ma_month": f"{mam['month']} {mam['year']}", "ab_benes": mam["ab_total"],
+        "ma_share_geo": f(cg, "MA_PRTCPTN_RATE"), "ffs_benes": int(f(cg, "BENES_OM_CNT")), "geo_year": cg["year"],
         "hsaf_ratio": sum(c["ratio"] for c in om["hsaf_ma_check"] if c["ratio"]) / max(1, sum(1 for c in om["hsaf_ma_check"] if c["ratio"])),
         "drg_rows": [{"drg": r["drg"], "desc": r["desc"], "discharges": r["discharges"], "tier": tier(r["drg"])} for r in drg],
         "drg_total": drg_tot, "tier_a": tiers["A"] / drg_tot, "tier_b": tiers["B"] / drg_tot, "tier_c": tiers["C"] / drg_tot,
@@ -201,7 +222,7 @@ def build_facts(cfg):
         "util": util,
         "county_op": county_op, "own_partb": own_partb, "op_capture": own_partb / county_op if county_op else 0, "op_elsewhere": max(0, county_op - own_partb),
         "county_snf": county_snf, "own_swing": own_swing, "swing_ratio": own_swing / county_snf if county_snf else 0,
-        "acs": acs, "tele_rural": tele.get((tele_year, "Rural")), "tele_urban": tele.get((tele_year, "Urban")), "tele_year": tele_year,
+        "acs": acs, "tele": tele, "tele_rural": tele["rural"], "tele_urban": tele["urban"], "tele_year": tele["label"],
         "rhcs": om["rhcs"], "rhc_radius": cfg.get("rhc_radius_miles", 45),
         "swing_los": los, "acute_los": val["inputs"]["acuteLOS"], "swing_tm_share": val["inputs"]["swingTMShare"], "acute_tm_share": val["inputs"]["acuteTMShare"],
         "per_day": {k: {"interim": I["perDay"][k]["margin"], "placeholder": Pl["perDay"][k]["margin"]} for k in I["perDay"]},
@@ -292,7 +313,8 @@ def tokens(F):
         "weak_zip": esc(L.zip(weak)), "weak_zip_bb": pct(a["zcta"][weak]["hh_broadband_share"]),
         "channel_advice": ("<b>Build voice and text first,</b> and treat the portal and online booking as a second channel." if voice_first
                            else "<b>Online booking and the portal can lead,</b> with voice and text as backup for older residents."),
-        "tele_rural": pct(F["tele_rural"] or 0, 1), "tele_urban": pct(F["tele_urban"] or 0, 1), "tele_year": str(F["tele_year"]),
+        "tele_rural": pct(F["tele_rural"] or 0, 1), "tele_urban": pct(F["tele_urban"] or 0, 1), "tele_period": F["tele_year"], "tele_change": tele_change(F["tele"]),
+        "ma_month": F["ma_month"],
         "front_door_items": items(cfg.get("front_door", []), "<li><span>Not checked</span><span>No website audit in this run.</span></li>"),
         "community_items": items(cfg.get("community", []), ""),
         "capacity_items": "".join(f"<li>{esc(c.format(tier_c=pct(F['tier_c'])))}</li>" for c in cfg.get("capacity_gaps", DEFAULT_CAPACITY)),
@@ -469,7 +491,7 @@ def build_workbook(F, path):
     # County use vs state
     ws = sheet(wb, "County use vs state", [40, 14, 14, 14, 16])
     put(ws, 1, 1, f"Medicare fee-for-service use, the county vs {st} and the US, {F['geo_year']}", TITLE)
-    put(ws, 2, 1, f"Source: CMS Medicare Geographic Variation by National, State & County, {API.format(S['geovar'])}. Fee-for-service beneficiaries only ({F['ffs_benes']:,}; {pct(F['ma_share'], 1)} of Part A+B beneficiaries are in Medicare Advantage).", NOTE)
+    put(ws, 2, 1, f"Source: CMS Medicare Geographic Variation by National, State & County, {API.format(S['geovar'])}. Fee-for-service beneficiaries only ({F['ffs_benes']:,}; {pct(F['ma_share_geo'], 1)} of Part A+B beneficiaries were in Medicare Advantage in {F['geo_year']}, and {pct(F['ma_share'], 1)} by {F['ma_month']} per CMS Medicare Monthly Enrollment, {API.format(S['monthly_enrollment'])}).", NOTE)
     header(ws, 4, ["Measure", "County", "State", "US", "County vs state"])
     for i, u in enumerate(F["util"]):
         r = 5 + i

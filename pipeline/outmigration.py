@@ -44,6 +44,8 @@ IP_DRG_ID = "690ddc6c-2767-4618-b277-420ffb2bf27c"       # Medicare Inpatient Ho
 GEOVAR_ID = "6219697b-8f6c-4164-bed4-cd9317c58ebc"       # Medicare Geographic Variation by National, State & County
 TELEHEALTH_ID = "939226be-b107-476e-8777-f199a840138a"   # Medicare Telehealth Trends
 RHC_ID = "3b7e7659-067e-41ea-8e36-f9ee2036e1f6"          # Rural Health Clinic Enrollments, 2026-10-01
+ENROLLMENT_ID = "d7fabe1e-d19b-4333-9eff-e80e0643f2fd"   # Medicare Monthly Enrollment (newest Medicare Advantage share)
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 GAZETTEER = "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2024_Gazetteer/2024_Gaz_zcta_national.zip"
 ACS = "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-{}.dat"
@@ -170,11 +172,19 @@ def fetch_geovar(state, fips):
 
 
 def fetch_telehealth(state_name):
-    rows = get_all(TELEHEALTH_ID, {"filter[Bene_Geo_Desc]": state_name, "filter[Quarter]": "Overall",
-                                   "filter[Bene_Age_Desc]": "All", "filter[Bene_Race_Desc]": "All", "filter[Bene_Sex_Desc]": "All",
-                                   "filter[Bene_Mdcd_Mdcr_Enrl_Stus]": "All", "filter[Bene_Mdcr_Entlmt_Stus]": "All"})
-    return [{"year": int(r["Year"]), "ruca": r["Bene_RUCA_Desc"], "pct": float(r["Pct_Telehealth"])}
+    """Every published period for the state: full years ("Overall") and quarters ("1" to "4")."""
+    rows = get_all(TELEHEALTH_ID, {"filter[Bene_Geo_Desc]": state_name, "filter[Bene_Age_Desc]": "All", "filter[Bene_Race_Desc]": "All",
+                                   "filter[Bene_Sex_Desc]": "All", "filter[Bene_Mdcd_Mdcr_Enrl_Stus]": "All", "filter[Bene_Mdcr_Entlmt_Stus]": "All"})
+    return [{"year": int(r["Year"]), "quarter": r["Quarter"], "ruca": r["Bene_RUCA_Desc"], "pct": float(r["Pct_Telehealth"])}
             for r in rows if r["Pct_Telehealth"] not in ("", None)]
+
+
+def fetch_ma_monthly(fips):
+    """The county's newest monthly Medicare Advantage share: MA enrollees over beneficiaries with Part A and B (KFF basis)."""
+    rows = [r for r in get_all(ENROLLMENT_ID, {"filter[BENE_FIPS_CD]": fips}) if r["MONTH"] in MONTHS and float(r["A_B_TOT_BENES"] or 0)]
+    r = max(rows, key=lambda r: (int(r["YEAR"]), MONTHS.index(r["MONTH"])))
+    ab, ma = float(r["A_B_TOT_BENES"]), float(r["A_B_MA_AND_OTH_BENES"] or 0)
+    return {"year": int(r["YEAR"]), "month": r["MONTH"], "ab_total": int(ab), "ab_ma": int(ma), "ma_share": ma / ab}
 
 
 def load_gazetteer():
@@ -270,6 +280,7 @@ def main(config_path):
             p["miles"] = round(miles(origin, gaz[p["zip"]]), 1)
     rhcs = fetch_rhcs(state, origin, gaz, cfg.get("rhc_radius_miles", 45))
     geovar = fetch_geovar(state, fips)
+    ma_monthly = fetch_ma_monthly(fips)
     tele = fetch_telehealth(STATE_NAMES.get(state, state))
 
     print("ACS (streams ~190 MB) ...")
@@ -280,12 +291,12 @@ def main(config_path):
         "pulled": date.today().isoformat(), "ccn": ccn, "zips": list(zips), "county_fips": fips, "state": state,
         "sources": {
             "hsaf": {str(y): i for y, i in HSAF_IDS.items()}, "pos": POS_ID, "ip_drg_cy2024": IP_DRG_ID, "geovar": GEOVAR_ID,
-            "telehealth": TELEHEALTH_ID, "rhc": RHC_ID, "ip_provider_cy2024": IP_PROVIDER_ID, "gazetteer": GAZETTEER,
+            "telehealth": TELEHEALTH_ID, "rhc": RHC_ID, "monthly_enrollment": ENROLLMENT_ID, "ip_provider_cy2024": IP_PROVIDER_ID, "gazetteer": GAZETTEER,
             "acs_5yr_2024": [ACS.format(t) for t in ACS_TABLES],
         },
         "hsaf": {str(y): rows for y, rows in hsaf.items()},
         "hsaf_own_origin": {str(y): rows for y, rows in own.items()}, "hsaf_ma_check": ma_check,
-        "providers": providers, "drg_mix_cy2024": drg, "geovar": geovar, "telehealth": tele, "rhcs": rhcs,
+        "providers": providers, "drg_mix_cy2024": drg, "geovar": geovar, "telehealth": tele, "rhcs": rhcs, "ma_monthly": ma_monthly,
         "acs": {"zcta": {z: acs[f"860Z200US{z}"] for z in zips}, "county": acs[f"0500000US{fips}"],
                 "state": acs[f"0400000US{fips[:2]}"], "us": acs["0100000US"]},
     }

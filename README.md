@@ -16,7 +16,7 @@ This project answers that question for a rural hospital using **public data only
 A rural hospital CEO asked a simple question: *where can AI keep patients from leaving the county?* Most answers to that question are vendor pitches. This one starts from where patients actually go and what the hospital can actually provide. It then prices each move the way a CAH is really paid:
 
 - **Traditional Medicare pays a CAH 101% of its costs.** Added Medicare volume pays a share of fixed costs the hospital carries anyway, so its value is not "charges times volume."
-- **Medicare Advantage pays a contract rate.** In the sample county, 64% of beneficiaries are in Medicare Advantage. At a nursing-home-level MA rate, bringing an MA patient home to a swing bed *loses* about $54K per stay. At a rate near the Medicare interim rate, it *adds* about $27K. The MA contract decides whether the top move pays.
+- **Medicare Advantage pays a contract rate.** In the sample county, 67% of beneficiaries were in Medicare Advantage as of July 2026. At a nursing-home-level MA rate, bringing an MA patient home to a swing bed *loses* about $54K per stay. At a rate near the Medicare interim rate, it *adds* about $27K. The MA contract decides whether the top move pays.
 - **More outpatient volume lowers the cost-to-charge ratio.** That trims what Medicare pays for inpatient ancillaries. The engine counts this second-order effect.
 
 ## What the sample found
@@ -60,7 +60,7 @@ flowchart LR
 
 | Step | What it does |
 |---|---|
-| `pipeline/outmigration.py` | Pulls 11 years of CMS service-area data for the hospital's ZIP codes, plus destination hospitals' DRG mix, county Medicare utilization, rural health clinics, telehealth use and Census broadband tables. It streams the Census summary files and filters them on the fly, since the Census API now needs a key. |
+| `pipeline/outmigration.py` | Pulls 11 years of CMS service-area data for the hospital's ZIP codes, plus destination hospitals' DRG mix, county Medicare utilization, the newest monthly Medicare Advantage share, rural health clinics, quarterly telehealth use and Census broadband tables. It streams the Census summary files and filters them on the fly, since the Census API now needs a key. |
 | `pipeline/hcris.py` | Decodes CMS cost-report bulk files for every CAH into the record the engine uses: days by payer, departmental costs and charges, and Medicare settlement worksheets. |
 | `engine/engine.js` | A deterministic restatement of the CAH cost report (D-1 per diem, C Pt I ancillaries, E-2/E-3/E Pt B settlements), with costs split into fixed and variable parts so volume and payer mix can move. |
 | `analysis/outmigration_value.js` | Values each lever as a change in operating margin at three volume steps and two MA rate cases. |
@@ -115,7 +115,7 @@ python3 analysis/build_report.py config.json
 
 ## Data sources
 
-All public: CMS Hospital Service Area File (CY2015–2025); Medicare Inpatient Hospitals by Provider, and by Provider and Service; Medicare Geographic Variation by county; Provider of Services; Rural Health Clinic Enrollments; Medicare Telehealth Trends; HCRIS cost reports (Form 2552-10); Census ACS 5-year 2020–2024 (tables B28001, B28002, B28005); Census 2024 ZCTA Gazetteer.
+All public: CMS Hospital Service Area File (CY2015–2025); Medicare Inpatient Hospitals by Provider, and by Provider and Service; Medicare Geographic Variation by county; Medicare Monthly Enrollment (newest Medicare Advantage share); Provider of Services; Rural Health Clinic Enrollments; Medicare Telehealth Trends; HCRIS cost reports (Form 2552-10); Census ACS 5-year 2020–2024 (tables B28001, B28002, B28005); Census 2024 ZCTA Gazetteer.
 
 ## Limitations
 

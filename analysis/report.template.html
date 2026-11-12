@@ -167,7 +167,7 @@ footer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
         <div class="val"><b>{{acute_interim_lo}} to {{acute_interim_hi}}</b><span>a year, at {{acute_n0}} to {{acute_n2}} more admissions</span></div>
       </li>
     </ol>
-    <p class="callout"><b>The Medicare Advantage rate decides move 1.</b> {{ma_share}} of the county's Medicare beneficiaries are in Medicare Advantage. A {{swing_los}}-day MA swing stay adds {{ma_stay_interim}} if the plan pays near the Medicare interim rate, and {{ma_stay_placeholder_phrase}} at the $487 a day the model uses as a placeholder. Until the hospital's MA contract rates are in hand, aim move 1 at Traditional Medicare patients.</p>
+    <p class="callout"><b>The Medicare Advantage rate decides move 1.</b> {{ma_share}} of the county's Medicare beneficiaries were in Medicare Advantage as of {{ma_month}}. A {{swing_los}}-day MA swing stay adds {{ma_stay_interim}} if the plan pays near the Medicare interim rate, and {{ma_stay_placeholder_phrase}} at the $487 a day the model uses as a placeholder. Until the hospital's MA contract rates are in hand, aim move 1 at Traditional Medicare patients.</p>
     <p class="small muted">Values are the change in the hospital's annual operating margin from the CAH engine, calibrated to its {{fy}} cost report. Traditional Medicare pays 101% of cost, so added volume earns its share of fixed cost. Ranges show the low and high volume steps, with MA swing at $3,180 a day. {{plan_note}}</p>
   </section>
 
@@ -198,7 +198,7 @@ footer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
     <div class="grid2">
       <div class="tablewrap"><table id="util"></table></div>
       <div class="prose">
-        <p>Medicare fee-for-service beneficiaries in the county, {{geo_year}}: {{ffs_benes}} of {{ab_benes}}. The rest ({{ma_share}}) are in Medicare Advantage.</p>
+        <p>The county figures cover Medicare fee-for-service beneficiaries ({{ffs_benes}} in {{geo_year}}). By {{ma_month}}, {{ma_share}} of the county's {{ab_benes}} beneficiaries with Part A and B were in Medicare Advantage.</p>
         {{util_paragraphs}}
         <p><b>Outpatient dollars leak.</b> The hospital's {{fy}} Medicare Part B settlement ({{own_partb}}) equals about {{op_capture}} of county residents' Medicare fee-for-service outpatient payments ({{county_op}}). That share is an upper bound, because the hospital also serves non-residents and cost-based payment runs above outpatient prospective rates. At least {{op_elsewhere}} a year in fee-for-service dollars alone goes to other hospitals.</p>
         <p>{{swing_paragraph}}</p>
@@ -212,7 +212,7 @@ footer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
       <div class="tablewrap"><table id="ready"></table></div>
       <div class="prose">
         <p>{{hh_no_net}} of county households have no internet ({{hh_no_net_state}} statewide). Among residents 65 and over, {{bb65}} have a computer and broadband ({{bb65_state}} statewide), and {{nocomp65}} have no computer at all. The weakest ZIP is {{weak_zip}}, with {{weak_zip_bb}} of households on broadband. {{phone}} of households have a smartphone, and {{cell_only}} get online only through a cellular plan.</p>
-        <p>{{channel_advice}} Rural Medicare beneficiaries in the state used telehealth at {{tele_rural}} in {{tele_year}} ({{tele_urban}} urban), so specialty telehealth tends to work better as a visit in the hospital's own clinic room than as a video call from home.</p>
+        <p>{{channel_advice}} In {{tele_period}}, {{tele_rural}} of the state's rural Medicare beneficiaries used telehealth ({{tele_urban}} urban){{tele_change}}. Specialty telehealth tends to work better as a visit in the hospital's own clinic room than as a video call from home.</p>
         <p class="small muted">Census ACS 2020–2024. Small ZIPs carry wide margins of error; read the county row for those.</p>
       </div>
     </div>
@@ -293,7 +293,7 @@ footer ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
     <ul>
       <li>CMS Hospital Service Area File, CY{{first_year}}–{{hsaf_year}} (Medicare inpatient stays by home ZIP and hospital).</li>
       <li>CMS Medicare Inpatient Hospitals by Provider, and by Provider and Service, CY2024.</li>
-      <li>CMS Medicare Geographic Variation by county, {{geo_year}}.</li>
+      <li>CMS Medicare Geographic Variation by county, {{geo_year}}, and Medicare Monthly Enrollment, {{ma_month}}.</li>
       <li>CMS Provider of Services, Medicare Telehealth Trends, and Rural Health Clinic Enrollments.</li>
       <li>Census ACS 5-year 2020–2024 (B28001, B28002, B28005) and the 2024 ZCTA Gazetteer.</li>
       <li>The hospital's Medicare cost reports (HCRIS) and public website.</li>
