@@ -1,0 +1,30 @@
+Rural Hospital Outmigration Scan: Hospital Internal-Use License
+
+Copyright (c) 2026 Tyler Wallace. All rights reserved, except as granted below.
+
+1. Permission. A hospital or health system ("you") may download, run and modify
+   this software, solely to assess patient outmigration and its own service area
+   for your own internal use. You may share the reports and workbooks it produces
+   with your own board, staff, medical staff, auditors, regulators and advisors.
+
+2. Restrictions. You may not:
+   a. sell, sublicense, rent, publish or redistribute the software, or any
+      modified version of it, to anyone else;
+   b. offer the software, or assessments produced with it, as a product or
+      service to other organizations, including as a consultant or vendor; or
+   c. remove or change this license or the copyright notice.
+
+3. No protected health information. The software is designed to run on public
+   data and on aggregate counts supplied by the hospital. You are responsible for
+   keeping protected health information and other patient-identifiable data out
+   of it, and for complying with HIPAA and any other law that applies to you.
+
+4. No warranty. The software and its outputs are provided "as is", without
+   warranty of any kind. Outputs are estimates built from public data. They are
+   not financial, legal, clinical or reimbursement advice. The copyright holder
+   is not liable for any claim, damages or other liability arising from the
+   software, its outputs or their use.
+
+5. Anything else. Any use not granted above, including use by consultants,
+   vendors or other third parties, requires prior written permission from the
+   copyright holder. Contact Tyler Wallace through GitHub (@Tyler-Scales).

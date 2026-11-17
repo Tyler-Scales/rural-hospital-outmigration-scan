@@ -1,0 +1,40 @@
+{
+  "ccn": "001301",
+  "zips": ["00001", "00002", "00003", "00004", "00005", "00006"],
+  "county_fips": "00000",
+  "anonymize": true,
+  "fictional": true,
+  "hide_towns": false,
+
+  "page_title": "Outmigration Scan: fictional sample",
+  "headline": "Keeping care local",
+  "prepared_by": "Sample",
+  "hospital_name": "Hospital A",
+  "hospital_short": "Hospital A",
+  "state_label": "the state",
+  "rhc_radius_miles": 45,
+
+  "provider_labels": {
+    "001101": {"name": "Referral Hospital B", "short": "Hospital B"},
+    "001102": {"name": "Regional Hospital C", "short": "Hospital C"},
+    "001103": "Tertiary Hospital D",
+    "001104": "Regional Hospital E"
+  },
+  "zip_labels": {"00001": "Town A", "00002": "Town B", "00003": "Town C", "00004": "Town D", "00005": "Town E", "00006": "Town F"},
+
+  "local_services": "CT, ultrasound, mammography, lab, physical therapy and colonoscopy",
+  "op_move_title": "Keep ordered imaging, lab, therapy and GI work local",
+  "specialties": "orthopedics and dermatology",
+  "access_note": "Booking is by phone only, and the clinic phones close at 4:30 p.m.",
+  "plan_note": "The board's plan already names patient access as a priority; moves 1 to 3 fit under it.",
+
+  "front_door": [
+    ["Find", "The website lists services but not their hours or how to book them. Imaging and lab have no page of their own."],
+    ["Access", "Booking is by phone only, weekdays until 4:30 p.m. There is no online scheduling and no text reminders."],
+    ["Return", "The swing-bed page describes the program but gives referring hospitals no direct contact."]
+  ],
+  "community": [
+    ["CHNA", "Residents name travel distance, after-hours care and specialist access as the top barriers."],
+    ["Plan", "The strategic plan commits to better patient access and a larger swing-bed program."]
+  ]
+}

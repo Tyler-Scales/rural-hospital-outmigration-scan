@@ -1,0 +1,13 @@
+# Local inputs and outputs: rebuilt from public data, and config.json names the hospital
+config.json
+data/
+output/
+pipeline/cache/
+# hospital-supplied aggregate counts: never committed
+inputs/
+
+__pycache__/
+node_modules/
+.DS_Store
+config.*.json
+!config.example.json
